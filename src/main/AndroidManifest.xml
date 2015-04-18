@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          android:versionCode="2"
+          android:versionName="1.0.0-SNAPSHOT"
+          package="com.example">
+
+    <application android:name=".ExampleApplication">
+        <activity android:name=".activities.MainActivity" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:authorities="com.example.providers.ExampleContentProvider"
+            android:name=".providers.ExampleContentProvider"
+            android:exported="false"/>
+
+        <service
+            android:name=".services.ApiService"
+            android:exported="false"/>
+    </application>
+</manifest>
