@@ -4,15 +4,17 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.dagger.Injector;
+
 public abstract class Task<T> implements Parcelable {
     public static final String ERROR = "error";
 
     public abstract String createIdentifier();
     public abstract T executeNetworking() throws Exception;
     public abstract void processResponse(final T response) throws Exception;
+    public abstract SyncStrategy getSyncStrategy();
     public abstract void notifySuccess();
     public abstract void notifyFailure();
-    public abstract void inject();
 
     protected final String mIdentifier;
     protected Context mContext;
@@ -30,6 +32,14 @@ public abstract class Task<T> implements Parcelable {
     public void setContext(final Context context) {
         mContext = context;
         inject();
+    }
+
+    protected void inject() {
+        ((Injector) mContext).inject(this);
+    }
+
+    public String getIdentifier() {
+        return mIdentifier;
     }
 
     @Override

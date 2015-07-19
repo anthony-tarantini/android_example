@@ -1,105 +1,92 @@
 package com.example.fragments;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.CursorAdapter;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.example.R;
-import com.example.dagger.Injector;
-import com.example.providers.ErrorReceiver;
 import com.example.providers.ExampleContentProvider;
-import com.example.providers.LoaderFactory;
-import com.example.services.ApiService;
+import com.example.services.ContentRequest;
 import com.example.tables.ProductTable;
 import com.example.tasks.ApiTask;
-
-import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ErrorReceiver.ErrorListener {
+public class MainFragment extends BaseListFragment {
+    @InjectView(R.id.content_view)
+    protected View mContentView;
 
-    @Inject
-    LoaderFactory mLoaderFactory;
+    @InjectView(R.id.loading_spinner)
+    protected View mLoadingView;
 
-    @Inject
-    LocalBroadcastManager mLocalBroadcastManager;
+    @InjectView(R.id.error_view)
+    protected View mErrorView;
 
-    @InjectView(R.id.list_view)
-    ListView mListView;
+    @InjectView(R.id.fragment_main_title_text)
+    protected TextView mTitleTextView;
 
-    private SimpleCursorAdapter mCursorAdapter;
-    private ErrorReceiver mErrorReceiver;
+    private String mQuery;
+
+    public static MainFragment newInstance(final String query) {
+        final MainFragment mainFragment = new MainFragment();
+        final Bundle arguments = new Bundle();
+        arguments.putString(Arguments.QUERY, query);
+        mainFragment.setArguments(arguments);
+        return mainFragment;
+    }
 
     @Override
-    public void onAttach(final Activity activity) {
-        super.onAttach(activity);
-        ((Injector) activity).inject(this);
+    public CursorAdapter createAdapter() {
+        return new SimpleCursorAdapter(getActivity(),
+                android.R.layout.simple_list_item_2, null,
+                new String[] {ProductTable.Columns.NAME, ProductTable.Columns.ORIGIN},
+                new int[] { android.R.id.text1, android.R.id.text2 }, 0);
+    }
+
+    @Override
+    public int getListViewId() {
+        return R.id.list_view;
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
+        mQuery = getArguments().getString(Arguments.QUERY);
         ButterKnife.inject(this, view);
+        mTitleTextView.setText(mQuery.toUpperCase());
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        final Activity activity = getActivity();
-        mLoaderFactory.createLoader(activity, this);
-        mCursorAdapter = new SimpleCursorAdapter(activity,
-                android.R.layout.simple_list_item_2, null,
-                new String[] {ProductTable.Columns.NAME, ProductTable.Columns.ORIGIN},
-                new int[] { android.R.id.text1, android.R.id.text2 }, 0);
-        mListView.setAdapter(mCursorAdapter);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        final Activity activity = getActivity();
-        ApiService.startService(activity, new ApiTask(activity, null));
-        mErrorReceiver = new ErrorReceiver(this, ExampleContentProvider.Paths.BEER_REQUEST);
-        mLocalBroadcastManager.registerReceiver(mErrorReceiver, mErrorReceiver.createIntentFilter());
+        final ApiTask apiTask = new ApiTask(getActivity(), mQuery);
+        final ContentRequest contentRequest = new ContentRequest();
+        contentRequest.setTask(apiTask);
+        contentRequest.setUri(ExampleContentProvider.RequestUris.BEER_REQUEST);
+        execute(contentRequest);
     }
 
     @Override
-    public void onError() {
-        mCursorAdapter.swapCursor(null);
+    public void onRequestComplete() {
+        mContentView.setVisibility(View.VISIBLE);
+        mLoadingView.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        mLocalBroadcastManager.unregisterReceiver(mErrorReceiver);
-        mErrorReceiver = null;
+    public void onRequestError() {
+        mErrorView.setVisibility(View.VISIBLE);
+        mLoadingView.setVisibility(View.GONE);
+        mContentView.setVisibility(View.GONE);
     }
 
-    @Override
-    public CursorLoader onCreateLoader(final int i, final Bundle bundle) {
-        return new CursorLoader(getActivity(), ExampleContentProvider.RequestUris.BEER_REQUEST, null, null, null, null);
-    }
-
-    @Override
-    public void onLoadFinished(final Loader loader, final Cursor cursor) {
-        mCursorAdapter.swapCursor(cursor);
-    }
-
-    @Override
-    public void onLoaderReset(final Loader loader) {
-        mCursorAdapter.swapCursor(null);
+    public interface Arguments {
+        String QUERY = "QUERY";
     }
 }

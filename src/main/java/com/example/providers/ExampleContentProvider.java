@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.util.SparseArray;
 
 import com.example.tables.ProductTable;
+import com.example.tables.TaskTable;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -18,8 +19,6 @@ public class ExampleContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.example.providers";
     public static final String CONTENT = "content://";
     public static final String BASE_URI = CONTENT + AUTHORITY;
-    public static final String CONTENT_TYPE_DIR = "vnd.android.cursor.dir/vnd.example.providers";
-    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.dir/vnd.example.providers";
 
     private final SparseArray<DatabaseSet> mMappings = new SparseArray<DatabaseSet>();
     private final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -66,6 +65,7 @@ public class ExampleContentProvider extends ContentProvider {
 
     public interface DatabaseUris {
         Uri PRODUCT_TABLE_URI = createUri(Tables.PRODUCT);
+        Uri TASK_TABLE_URI = createUri(Tables.TASK);
     }
 
     public interface RequestUris {
@@ -74,6 +74,7 @@ public class ExampleContentProvider extends ContentProvider {
 
     private interface Tables {
         String PRODUCT = ProductTable.TABLE_NAME;
+        String TASK = TaskTable.TABLE_NAME;
     }
 
     private interface Views {
@@ -81,15 +82,20 @@ public class ExampleContentProvider extends ContentProvider {
 
     private interface Codes {
         int PRODUCTS = 1;
-        int PRODUCT = 2;
+        int BEER_REQUEST = 2;
+        int TASK = 3;
     }
 
     @Override
     public boolean onCreate() {
 		mUriMatcher.addURI(AUTHORITY, Tables.PRODUCT, Codes.PRODUCTS);
 		mMappings.append(Codes.PRODUCTS, new ProductTable());
-		mUriMatcher.addURI(AUTHORITY, Tables.PRODUCT + "/*", Codes.PRODUCT);
-		mMappings.append(Codes.PRODUCT, new ProductTable());
+
+        mUriMatcher.addURI(AUTHORITY, Paths.BEER_REQUEST, Codes.BEER_REQUEST);
+        mMappings.append(Codes.BEER_REQUEST, new ProductTable());
+
+        mUriMatcher.addURI(AUTHORITY, Tables.TASK, Codes.TASK);
+        mMappings.append(Codes.TASK, new TaskTable());
 
         createDatabase();
         return true;

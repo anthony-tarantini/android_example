@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/list_view"
+    <android.support.v7.widget.CardView
+        android:id="@+id/content_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="10dp"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="60dp"
+            android:scrollbars="none"
+            android:clipToPadding="false"
+            android:background="@android:color/white" />
+
+        <TextView
+            android:id="@+id/fragment_main_title_text"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:textSize="30dp"
+            android:textColor="@color/primary_dark"
+            android:gravity="center"
+            tools:text="@string/beer"
+            android:background="@color/trans_grey"/>
+    </android.support.v7.widget.CardView>
+
+    <include layout="@layout/loading_spinner"/>
+
+    <include layout="@layout/error_view" />
+</FrameLayout>

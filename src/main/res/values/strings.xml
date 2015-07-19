@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="beer">Beer</string>
+    <string name="error_text">Something went wrong!</string>
+    <string name="liquor">Liqour</string>
+    <string name="wine">Wine</string>
+    <string name="beverage_type">Beverage Type</string>
+</resources>

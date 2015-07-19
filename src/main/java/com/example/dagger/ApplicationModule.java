@@ -7,6 +7,7 @@ import com.example.fragments.MainFragment;
 import com.example.networking.LCBOApiClient;
 import com.example.networking.NetworkInterceptor;
 import com.example.providers.LoaderFactory;
+import com.example.services.ApiIntentService;
 import com.example.tasks.ApiTask;
 
 import javax.inject.Singleton;
@@ -18,7 +19,8 @@ import retrofit.RestAdapter;
 @Module(
         injects = {
                 ApiTask.class,
-                MainFragment.class
+                MainFragment.class,
+                ApiIntentService.class
         },
         library = true,
         complete = false
@@ -31,7 +33,7 @@ public class ApplicationModule {
     public ApplicationModule(final Context context) {
         mContext = context;
     }
-    @Provides @Singleton @ForApplication
+    @Provides @Singleton
     Context providesContext() {
         return mContext;
     }

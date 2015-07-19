@@ -2,17 +2,19 @@ package com.example.tasks;
 
 import android.os.Parcel;
 
+import com.example.BuildConfig;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = "src/main/AndroidManifest.xml", emulateSdk = 18)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(manifest = "src/main/AndroidManifest.xml", constants=BuildConfig.class)
 public class TaskTest {
 
     @Test
@@ -38,7 +40,7 @@ public class TaskTest {
 
     private class TestTask extends Task<Object> {
         public TestTask() {
-            super(Robolectric.application);
+            super(RuntimeEnvironment.application);
         }
 
         public TestTask(final Parcel mockParcel) {
@@ -66,8 +68,18 @@ public class TaskTest {
         }
 
         @Override
-        public void inject() {
+        protected void inject() {
 
+        }
+
+        @Override
+        public SyncStrategy getSyncStrategy() {
+            return new SyncStrategy() {
+                @Override
+                public boolean checkSyncNeeded() {
+                    return true;
+                }
+            };
         }
 
         @Override

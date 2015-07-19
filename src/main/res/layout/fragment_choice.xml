@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50dp"
+        android:text="@string/beverage_type"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/fragment_choice_beer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50dp"
+        android:text="@string/beer"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/fragment_choice_wine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50dp"
+        android:text="@string/wine"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/fragment_choice_liquor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50dp"
+        android:text="@string/liquor"
+        android:gravity="center" />
+</LinearLayout>
